@@ -13,7 +13,7 @@
 
       body {
         height: 100vh;
-        background: #111;
+        background: #393939;
         display: flex;
         align-items: center;
       }
@@ -65,7 +65,7 @@
         position: absolute;
         bottom: 0;
         left: 0;
-        background: url(img/suelo.jpg) repeat-x 0px 0px;
+        background: url(img/pasto2.png) repeat-x 0px 0px;
         background-size: 50% 42px;
       }
 
@@ -76,12 +76,12 @@
         bottom: 16px;
         left: 600px;
         z-index: 1;
-        background: url(img/monstruo9.png) no-repeat;
+        background: url(img/monstruo1.png) no-repeat;
       }
       .cactus2 {
         width: 122px;
         height: 66px;
-        background: url(img/monstruo8.png) no-repeat;
+        background: url(img/monstruo2.png) no-repeat;
       }
 
       .nube {
@@ -100,7 +100,7 @@
         top: 5px;
         right: 15px;
         z-index: 10;
-        color: #d48871;
+        color: #603e34;
         font-family: Verdana;
         font-size: 30px;
         font-weight: bold;
@@ -117,6 +117,34 @@
         font-family: Verdana;
         font-weight: 700;
       }
+      .start-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    z-index: 999; 
+}
+      .restart-button {
+        display: none;
+        position: absolute;
+        top: 10%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 10px 10px;
+        background-color: #332882;
+        color: #dcdbdb;
+        font-size: 16px;
+        font-family: Verdana;
+        cursor: pointer;
+        border-radius: 3px;
+        z-index: 999;
+      }
 
       @keyframes animarDino {
         from {
@@ -132,9 +160,11 @@
     <div class="contenedor">
       <div class="suelo"></div>
 
-      <div class="dino dino-corriendo"></div>
+      <div class="dino"></div>
 
       <div class="score">0</div>
+      <div class="start-button" onclick="IniciarJuego()">Comenzar</div>
+      <div class="restart-button" onclick="ReiniciarJuego()">Intentar otra vez</div>
     </div>
 
     <div class="game-over">GAME OVER</div>
@@ -144,6 +174,7 @@
 
       var time = new Date();
       var deltaTime = 0;
+      var juegoIniciado = false; 
 
       if (
         document.readyState === "complete" ||
@@ -157,8 +188,14 @@
       function Init() {
         time = new Date();
         Start();
-        Loop();
       }
+
+      function IniciarJuego() {
+    document.querySelector('.start-button').style.display = "none";
+    dino.classList.add("dino-corriendo");
+    juegoIniciado = true; 
+    Loop();  
+}
 
       function Loop() {
         deltaTime = (new Date() - time) / 1000;
@@ -168,6 +205,8 @@
       }
 
       //****** GAME LOGIC ********//
+
+
 
       var sueloY = 22;
       var velY = 0;
@@ -214,6 +253,10 @@
         document.addEventListener("keydown", HandleKeyDown);
       }
 
+      function ReiniciarJuego() {
+        location.reload(); // Recarga la página para reiniciar el juego
+      }
+
       function Update() {
         if (parado) return;
 
@@ -243,6 +286,7 @@
       }
 
       function MoverDinosaurio() {
+        if (!juegoIniciado) return;
         dinoPosY += velY * deltaTime;
         if (dinoPosY < sueloY) {
           TocarSuelo();
@@ -346,21 +390,27 @@
         score++;
         textoScore.innerText = score;
         if (score == 5) {
-          gameVel = 1.5;
+          gameVel = 1.2;
           contenedor.classList.add("mediodia");
         } else if (score == 10) {
-          gameVel = 2;
+          gameVel = 1.6;
           contenedor.classList.add("tarde");
         } else if (score == 20) {
-          gameVel = 3;
+          gameVel = 2;
           contenedor.classList.add("noche");
+        } else if (score == 30) {
+          gameVel = 3;
+          contenedor.classList.add("mediodia");
         }
+
         suelo.style.animationDuration = 3 / gameVel + "s";
       }
 
       function GameOver() {
         Estrellarse();
         gameOver.style.display = "block";
+        juegoIniciado = false; 
+        document.querySelector(".restart-button").style.display = "block";
       }
 
       function DetectarColision() {
@@ -369,7 +419,7 @@
             //EVADE
             break; //al estar en orden, no puede chocar con más
           } else {
-            if (IsCollision(dino, obstaculos[i], 10, 30, 15, 20)) {
+            if (IsCollision(dino, obstaculos[i], 30, 20, 30, 40)) {
               GameOver();
             }
           }
