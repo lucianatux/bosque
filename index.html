@@ -250,6 +250,8 @@
         textoScore = document.querySelector(".score");
         dino = document.querySelector(".dino");
         document.addEventListener("keydown", HandleKeyDown);
+        document.addEventListener("touchstart", HandleTouchStart);
+
       }
 
       function ReiniciarJuego() {
@@ -283,6 +285,11 @@
           dino.classList.remove("dino-corriendo");
         }
       }
+      function HandleTouchStart(ev) {
+  if (juegoIniciado) {
+    Saltar();
+  }
+}
 
       function MoverDinosaurio() {
         if (!juegoIniciado) return;
